@@ -1,0 +1,47 @@
+import streamlit as st
+import hashlib
+import datetime
+
+# Blockchain and functions as per the original code
+blockchain = []
+
+def calculate_hash(data, timestamp, previous_hash):
+    return hashlib.sha256(f"{data}{timestamp}{previous_hash}".encode()).hexdigest()
+
+def create_block(data, previous_hash="None"):
+    timestamp = str(datetime.datetime.now())
+    block_hash = calculate_hash(data, timestamp, previous_hash)
+    block = {
+        "data": data,
+        "timestamp": timestamp,
+        "previous_hash": previous_hash,
+        "hash": block_hash
+    }
+    return block
+
+# Streamlit UI
+st.title("Blockchain Simulator")
+st.write("This app simulates a simple blockchain system.")
+
+# Display the current blockchain
+st.subheader("Current Blockchain:")
+for block in blockchain:
+    st.write(block)
+
+# Input to add new block
+new_block_data = st.text_input("Enter data for the new block", "Ticket-4")
+
+if st.button("Add New Block"):
+    if blockchain:
+        previous_hash = blockchain[-1]['hash']
+    else:
+        previous_hash = "None"
+        
+    new_block = create_block(new_block_data, previous_hash)
+    blockchain.append(new_block)
+    st.success(f"Block Added: {new_block_data}")
+
+    # Display updated blockchain
+    st.subheader("Updated Blockchain:")
+    for block in blockchain:
+        st.write(block)
